@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:settings="http://schemas.android.com/apk/res/com.android.settings"
+  android:key="video_call_fallback_setting"
+  android:title="@string/tty_settings"
+  android:persistent="false">
+  
+  <ListPreference
+    android:key="tty_databits"
+    android:title="@string/databits"
+    android:persistent="true"
+    android:entries="@array/databits_entries"
+    android:entryValues="@array/databits_values"
+    android:summary="data bits"/>
+
+  <ListPreference
+    android:key="tty_event"
+    android:title="@string/event"
+    android:persistent="true"
+    android:entries="@array/event_entries"
+    android:entryValues="@array/event_values"
+    android:summary="data bits"/>
+
+  <ListPreference
+    android:key="tty_speed"
+    android:title="@string/speed"
+    android:persistent="true"
+    android:entries="@array/speed_entries"
+    android:entryValues="@array/speed_values"
+    android:summary="data bits"/>
+
+  
+  <ListPreference
+    android:key="tty_stopbits"
+    android:title="@string/stopbits"
+    android:persistent="true"
+    android:entries="@array/stopbits_entries"
+    android:entryValues="@array/stopbits_values"
+    android:summary="data bits"/>
+</PreferenceScreen>
