@@ -20,7 +20,8 @@ public class TtyNativeControl {
     private EventHandler mEventHandler; 
     private ReceiveCallback mReceiveCallBack;
     
-    TtyNativeControl() {
+    TtyNativeControl() 
+    {
         mReceiveCallBack = null;
         Looper looper;
         

@@ -11,5 +11,5 @@ LOCAL_SHARED_LIBRARIES := \
   libui \
   libandroid_runtime
 LOCAL_PRELINK_MODULE := false
-LOCAL_MODULE := uart_ctl
+LOCAL_MODULE := libuart_ctl
 include $(BUILD_SHARED_LIBRARY)
