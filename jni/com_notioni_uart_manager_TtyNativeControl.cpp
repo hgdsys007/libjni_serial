@@ -228,15 +228,19 @@ static int JNICALL com_notioni_uart_manager_TtyNativeControl__sendMsgToTty(
 * 线程Run
 */
 void* threadreadTtyData(void* arg) {
+    LOGW("===============richard: openDevice to receive Data    111111 ==============");
     LOGW("run read data");
-    if(!(arg)) {
-        return NULL;
-    }
-    char* buf = new char[200];
+    //if(!(arg)) {
+    //    return NULL;
+   // }
+    char* buf = new char[1024];
     int result = 0,ret;
     fd_set readfd;
     struct timeval timeout;
-    while(mOpen) {
+    int len = 0;
+    len = read(mTtyfd, buf, 1024);
+    while(mOpen) 
+    {
         timeout.tv_sec = 2;//设定超时秒数
         timeout.tv_usec = 0;//设定超时毫秒数
         FD_ZERO(&readfd);//清空集合
@@ -251,13 +255,17 @@ void* threadreadTtyData(void* arg) {
             break;
         default:/* 说明等待时间还未到5秒加0毫秒，mTty的状态发生了变化 */
             if(FD_ISSET(mTtyfd,&readfd)) { /* 先判断一下mTty这外被监视的句柄是否真的变成可读的了 */
-                int len = read(mTtyfd,buf,sizeof(buf));
+                len += read(mTtyfd, &buf[len], 1024-len);
+                LOGE("#####################richard: read len: %d #####",len);
+                if (len >= 20)
+                    len = 0;
                 /**发送数据**/
-                if(!(arg))break;
-                JNIMyObserver *l = static_cast<JNIMyObserver *>(arg);
-                l->OnEvent(buf,len,RECEIVE_DATA_INDEX);
-                memset(buf,0,sizeof(buf));
+               // if(!(arg))break;
+              //  JNIMyObserver *l = static_cast<JNIMyObserver *>(arg);
+            //    l->OnEvent(buf,len,RECEIVE_DATA_INDEX);
+                //memset(buf,0,sizeof(buf));
             }
+            //LOGE("#####################richard: read len: %s #####",buf);
             break;
         }
         if(result == -1) {
@@ -278,13 +286,14 @@ void* threadreadTtyData(void* arg) {
 static void JNICALL com_notioni_uart_manager_TtyNativeControl__receiveMsgFromTty(JNIEnv *env,jobject clazz)
 {
     LOGW("com_notioni_uart_manager_TtyNativeControl__receiveMsgFromTty");
+          LOGW( "===============richard: openDevice to receive Data    111111 ==============");
     if(mTtyfd < 0) {
         LOGE("mTtyfd open failure ,non't read");
         return ;
     }
     pthread_t id;
     int ret;
-    ret = pthread_create(&id,NULL,threadreadTtyData,listener);
+    ret = pthread_create(&id,NULL,threadreadTtyData, NULL);
     if(ret != 0) {
         LOGE("create receiver thread failure ");
     } else {

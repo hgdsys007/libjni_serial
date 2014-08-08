@@ -26,10 +26,14 @@ public class TtyNativeControl {
         Looper looper;
         
         if((looper = Looper.myLooper()) != null) {
+                Log.i(TAG, "openDevice result:");
             mEventHandler = new EventHandler(this, looper);
+            Log.i(TAG, "===========Richard: TtyNativeControl ========11111");
         } else if((looper = Looper.getMainLooper()) != null) {
             mEventHandler = new EventHandler(this, looper);
+            Log.i(TAG, "===========Richard: TtyNativeControl ========22222");
         } else {
+            Log.i(TAG, "===========Richard: TtyNativeControl ========33333");
             mEventHandler = null;
         }
 
@@ -65,10 +69,10 @@ public class TtyNativeControl {
 
     /**
     * 接收数据
-    * @param callback
     */
-    public final void receiveMsgFromTty(ReceiveCallback callback) {
-        mReceiveCallBack = callback;
+    public final void receiveMsgFromTty() {
+       // mReceiveCallBack = callback;
+            Log.i(TAG, "===========Richard: TtyNativeControl ========444444");
         _receiveMsgFromTty();
     }
 
@@ -98,6 +102,7 @@ public class TtyNativeControl {
     */
     public interface ReceiveCallback {
         void onReceiveData(byte[] data,TtyNativeControl tty);
+            //Log.i(TAG, "===========Richard: TtyNativeControl ========555555");
     }
 
 
@@ -140,6 +145,7 @@ public class TtyNativeControl {
         public void handleMessage(Message msg) {
             switch(msg.what) {
             case TTY_MSG_RECEIVE:       //底层接收数据回调上来的事件
+            Log.i(TAG, "===========Richard: TtyNativeControl ========666666");
                 if(mReceiveCallBack != null) {
                     mReceiveCallBack.onReceiveData((byte[])msg.obj,mTty);
                 }

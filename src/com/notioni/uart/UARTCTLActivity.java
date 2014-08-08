@@ -50,15 +50,56 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         switch(v.getId()) {
         case R.id.openOrcloseBtn://打开或关闭驱动
+                //Richard
+                openDevice();
+
             Log.i(TAG, "isOpen:"+mUartctlManager.isOpenDevice());
             if(mUartctlManager.isOpenDevice()) {
-                mUartctlManager.closeDevice();
+                //mUartctlManager.closeDevice();
                 mOpenOrCloseBtn.setText(R.string.open);
             } else {
-                int i =mUartctlManager.openDevice();
-                Log.i(TAG, "openDevice result:"+i);
+
+                //int i =mUartctlManager.openDevice();
+                //Log.i(TAG, "openDevice result:"+i);
                 mOpenOrCloseBtn.setText(R.string.close);
                 mUartctlManager.setMode(1, 1);//查看串口配置信息
+
+				byte[] sendbuf=new byte[256];	
+                
+					sendbuf[0] = (byte)0xaa;
+					sendbuf[1] = (byte)0xaa;
+					sendbuf[2] = (byte)0xaa;	
+					sendbuf[3] = (byte)0xaa;
+					sendbuf[4] = (byte)0xaa;					
+					sendbuf[5] = (byte)0xaa;
+					sendbuf[6] = (byte)0xaa;
+					sendbuf[7] = (byte)0xaa;	
+					sendbuf[8] = (byte)0xaa;
+					sendbuf[9] = (byte)0xaa;
+					sendbuf[10] = (byte)0xaa;
+					sendbuf[11] = (byte)0xaa;	
+					sendbuf[12] = (byte)0xaa;
+					sendbuf[13] = (byte)0xaa;
+					sendbuf[14] = (byte)0xaa;
+					sendbuf[15] = (byte)0xaa;	
+                int re1 = mUartctlManager.sendDataToDevice(sendbuf);
+			
+
+							sendbuf[0] = (byte)0xcc;
+							sendbuf[1] = (byte)0xcc;
+							sendbuf[2] = (byte)0xcc;	
+							sendbuf[3] = (byte)0xcc;
+                int re2 = mUartctlManager.sendDataToDevice(sendbuf);
+
+
+                sendbuf[0] = 0;
+				sendbuf[1] = 0x02;
+				sendbuf[2] = 0;	
+				sendbuf[3] = 0x20;
+                int re0 = mUartctlManager.sendDataToDevice(sendbuf);
+                Log.i(TAG, "send result:"+re0);
+
+
             }
             break;
         case R.id.sendBtn:
@@ -75,7 +116,9 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     private void openDevice() {
         if(!mUartctlManager.isOpenDevice()) {
             mUartctlManager.openDevice();
-            mUartctlManager.receiveDataFromDevice(mReceiveData);
+            Log.i(TAG, "===============richard: openDevice to receive Data    111111 ==============");
+            //mUartctlManager.receiveDataFromDevice(mReceiveData);
+            mUartctlManager.receiveDataFromDevice();
         }
     }
     
@@ -105,6 +148,7 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     class ReceiveData implements UARTCTLManager.ReceiveDataCallBack {
         @Override
         public void onReceiveData(byte[] data, TtyNativeControl tty) {
+            Log.i(TAG, "===============richard:  2222222222 ==============");
             if(mReceiveText != null && data != null) {
                 Log.w(TAG, "[onReceiveData] data:"+data.toString());
                 mReceiveText.setText(data.toString());

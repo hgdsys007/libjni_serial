@@ -1,4 +1,5 @@
 package com.notioni.uart.manager;
+import android.util.Log;
 import com.notioni.uart.manager.TtyNativeControl.ReceiveCallback;
 
 /*
@@ -7,11 +8,13 @@ import com.notioni.uart.manager.TtyNativeControl.ReceiveCallback;
 public class UARTCTLManager 
 {
     private TtyNativeControl mTtyControl;
+    private static final String TAG = "UARTCTLManager";
     private boolean mIsOpen = false;
     private static UARTCTLManager mManager;
     
     private UARTCTLManager() {
     	//super().TtyNativeControl();
+            Log.i(TAG, "===============richard: openDevice new TtyNativeControl()   00000 ==============");
         mTtyControl = new TtyNativeControl();
     }
    
@@ -62,9 +65,11 @@ public class UARTCTLManager
     /*
     * 注入接收数据回调方法
     */
-    public void receiveDataFromDevice(ReceiveCallback callback) {
-        mTtyControl.receiveMsgFromTty(callback);
+    public void receiveDataFromDevice() {
+            Log.i(TAG, "===============richard: openDevice to receive Data    111111 ==============");
+        mTtyControl.receiveMsgFromTty();
     }
+
     
     /**
     * 设置串口数据位，校验位,速率，停止位
@@ -96,5 +101,6 @@ public class UARTCTLManager
     * 接收数据回调接口，接收驱动送到的数据要实现这个回调接口
     */
     public interface ReceiveDataCallBack extends ReceiveCallback {
+            //Log.i(TAG, "===============richard: 3333333333333  ==============");
     }
 }
