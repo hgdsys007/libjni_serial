@@ -50,13 +50,16 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     public void onClick(View v) {
         switch(v.getId()) {
         case R.id.openOrcloseBtn://打开或关闭驱动
+                //Richard
+                openDevice();
+
             Log.i(TAG, "isOpen:"+mUartctlManager.isOpenDevice());
             if(mUartctlManager.isOpenDevice()) {
-                mUartctlManager.closeDevice();
+              //  mUartctlManager.closeDevice();
                 mOpenOrCloseBtn.setText(R.string.open);
             } else {
-                int i =mUartctlManager.openDevice();
-                Log.i(TAG, "openDevice result:"+i);
+             //   int i =mUartctlManager.openDevice();
+             //   Log.i(TAG, "openDevice result:"+i);
                 mOpenOrCloseBtn.setText(R.string.close);
                 mUartctlManager.setMode(1, 1);//查看串口配置信息
             }
@@ -75,6 +78,7 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     private void openDevice() {
         if(!mUartctlManager.isOpenDevice()) {
             mUartctlManager.openDevice();
+            Log.i(TAG, "===============richard: openDevice to receive Data    111111 ==============");
             mUartctlManager.receiveDataFromDevice(mReceiveData);
         }
     }
@@ -102,12 +106,25 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     /*
     * 接收数据
     */
+	public static String bytes2HexString(byte[] b) {
+		String ret = "";
+		for (int i = 0; i < b.length; i++) {
+			String hex = Integer.toHexString(b[ i ] & 0xFF);
+		if (hex.length() == 1) {
+			hex = '0' + hex;
+		}
+		ret += hex.toUpperCase();
+		}
+		return ret;
+	}	
     class ReceiveData implements UARTCTLManager.ReceiveDataCallBack {
         @Override
         public void onReceiveData(byte[] data, TtyNativeControl tty) {
             if(mReceiveText != null && data != null) {
-                Log.w(TAG, "[onReceiveData] data:"+data.toString());
-                mReceiveText.setText(data.toString());
+				String mGetData = bytes2HexString(data);
+                Log.w(TAG, "[onReceiveData] data:"+ mGetData);
+                //mReceiveText.setText(data.toString());
+                mReceiveText.setText(mGetData);
             }
         }
     }

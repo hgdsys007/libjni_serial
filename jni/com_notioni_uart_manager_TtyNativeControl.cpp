@@ -97,7 +97,7 @@ JNIMyObserver::~JNIMyObserver()
 
 void JNIMyObserver::OnEvent(const char* buffer,int length,int what) 
 {
-    LOGW("OnEvent");
+    //LOGW("OnEvent");
     Mutex::Autolock _l(mLock);
     if(NULL == g_JavaVM) {
         LOGE("JNIObserver::Event g_JavaVM is NULL");
@@ -252,6 +252,8 @@ void* threadreadTtyData(void* arg) {
         default:/* 说明等待时间还未到5秒加0毫秒，mTty的状态发生了变化 */
             if(FD_ISSET(mTtyfd,&readfd)) { /* 先判断一下mTty这外被监视的句柄是否真的变成可读的了 */
                 int len = read(mTtyfd,buf,sizeof(buf));
+                //LOGE("#####################richard: read len: %d #####",len);
+                //LOGE("#####################richard: read buf: %02x, #####",buf[0]);
                 /**发送数据**/
                 if(!(arg))break;
                 JNIMyObserver *l = static_cast<JNIMyObserver *>(arg);
