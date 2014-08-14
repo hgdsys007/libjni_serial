@@ -51,7 +51,7 @@ struct fields_t {
 static fields_t fields;
 JavaVM* g_JavaVM;
 
-#define TTY_DEVICE "/dev/ttyS0"
+#define TTY_DEVICE "/dev/ttyS3"
 #define LOG_TAG "TtyNativeControl"
 #define RECEIVE_DATA_INDEX (1)
 #define POST_EVENT()
@@ -236,9 +236,14 @@ void* threadreadTtyData(void* arg) {
     int result = 0,ret;
     fd_set readfd;
     struct timeval timeout;
+#if 0
+    //while(mOpen) {
+    //    sleep(2);//等待线程退出
+   // }
+#else
     while(mOpen) {
-        timeout.tv_sec = 2;//设定超时秒数
-        timeout.tv_usec = 0;//设定超时毫秒数
+        timeout.tv_sec = 0;//设定超时秒数
+        timeout.tv_usec = 200*1000;// 500;//设定超时毫秒数
         FD_ZERO(&readfd);//清空集合
         FD_SET(mTtyfd,&readfd);///* 把要检测的句柄mTtyfd加入到集合里 */
         ret = select(mTtyfd+1,&readfd,NULL,NULL,&timeout);/* 检测我们上面设置到集合readfd里的句柄是否有可读信息 */
@@ -252,8 +257,8 @@ void* threadreadTtyData(void* arg) {
         default:/* 说明等待时间还未到5秒加0毫秒，mTty的状态发生了变化 */
             if(FD_ISSET(mTtyfd,&readfd)) { /* 先判断一下mTty这外被监视的句柄是否真的变成可读的了 */
                 int len = read(mTtyfd,buf,sizeof(buf));
-                //LOGE("#####################richard: read len: %d #####",len);
-                //LOGE("#####################richard: read buf: %02x, #####",buf[0]);
+                LOGE("#####################richard: read len: %d #####",len);
+                LOGE("#####################richard: read buf: %02x, #####",buf[0]);
                 /**发送数据**/
                 if(!(arg))break;
                 JNIMyObserver *l = static_cast<JNIMyObserver *>(arg);
@@ -270,6 +275,7 @@ void* threadreadTtyData(void* arg) {
         delete buf;
         buf = NULL;
     }
+#endif
     LOGE("stop run!");
     return NULL;
 }
@@ -287,6 +293,7 @@ static void JNICALL com_notioni_uart_manager_TtyNativeControl__receiveMsgFromTty
     pthread_t id;
     int ret;
     ret = pthread_create(&id,NULL,threadreadTtyData,listener);
+    //ret = pthread_create(&id,NULL,threadreadTtyData,NULL);
     if(ret != 0) {
         LOGE("create receiver thread failure ");
     } else {

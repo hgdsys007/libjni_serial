@@ -4,11 +4,12 @@
   android:layout_height="fill_parent"
   android:orientation="vertical" >
   
+    <!--
   <LinearLayout
     android:layout_width="fill_parent"
     android:layout_height="60dip"
     android:orientation="horizontal">
-    
+
     <Button
       android:id="@+id/openOrcloseBtn"
       android:layout_gravity="center"
@@ -17,6 +18,7 @@
       android:text="@string/open"
       />
   </LinearLayout>
+  -->
   
   <LinearLayout
     android:layout_width="fill_parent"

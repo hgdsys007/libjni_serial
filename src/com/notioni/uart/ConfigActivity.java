@@ -8,7 +8,7 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.util.Log;
 import android.widget.Toast;
-import com.notioni.uart.manager.R;
+//import com.notioni.uart.manager.R;
 
 public class ConfigActivity extends PreferenceActivity implements Preference.OnPreferenceChangeListener{
     private static final String TAG = "ConfigActivity";

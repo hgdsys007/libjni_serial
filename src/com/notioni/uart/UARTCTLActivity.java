@@ -1,7 +1,7 @@
 package com.notioni.uart;
 
 import com.notioni.uart.manager.TtyNativeControl;
-import com.notioni.uart.manager.R;
+//import com.notioni.uart.manager.R;
 import com.notioni.uart.manager.UARTCTLManager;
 
 import android.app.Activity;
@@ -14,16 +14,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import java.io.IOException;
+import java.util.Arrays;
 
 public class UARTCTLActivity extends Activity implements View.OnClickListener
 {
     private static final String TAG = "UARTCTLActivity";
     private UARTCTLManager mUartctlManager;
-    private Button mOpenOrCloseBtn;
+    //private Button mOpenOrCloseBtn;
     private Button mSendBtn;
     private EditText mSendText;
     private TextView mReceiveText;
     private ReceiveData mReceiveData;
+	
+    SendingThread mSendingThread;
+	byte[] mBuffer;
     
     /** Called when the activity is first created. */
     @Override
@@ -32,12 +37,30 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         mUartctlManager = UARTCTLManager.getInstance();
+       
+        //Richard: config the tty device
+        int databits=7;
+        int speed=9600;//115200; //9600;
+        int stopbits=1;
+        char event='N'; //设置默认值
+        Log.i(TAG, "===============richard: config tty device ==============");
+        mUartctlManager.configDevice(databits, event, speed, stopbits);
+        //mUartctlManager.setMode(0, 1);//查看串口配置信息
+        
+        //richard receiver data background
         mReceiveData = new ReceiveData();
-        mOpenOrCloseBtn = (Button)findViewById(R.id.openOrcloseBtn);
+        openDevice();
+        
+        //Richard: config the tty device
+        Log.i(TAG, "===============richard: config tty device ==============");
+        mUartctlManager.configDevice(databits, event, speed, stopbits);
+        //mUartctlManager.setMode(0, 1);//查看串口配置信息
+        
+        //mOpenOrCloseBtn = (Button)findViewById(R.id.openOrcloseBtn);
         mSendBtn = (Button)findViewById(R.id.sendBtn);
         mSendText = (EditText)findViewById(R.id.sendMsg);
         mReceiveText = (TextView)findViewById(R.id.receiveMsg);
-        mOpenOrCloseBtn.setOnClickListener(this);
+        //mOpenOrCloseBtn.setOnClickListener(this);
         mSendBtn.setOnClickListener(this);
     }
     
@@ -49,7 +72,7 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
     @Override
     public void onClick(View v) {
         switch(v.getId()) {
-        case R.id.openOrcloseBtn://打开或关闭驱动
+        /*case R.id.openOrcloseBtn://打开或关闭驱动
                 //Richard
                 openDevice();
 
@@ -63,14 +86,29 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
                 mOpenOrCloseBtn.setText(R.string.close);
                 mUartctlManager.setMode(1, 1);//查看串口配置信息
             }
-            break;
+            break;*/
         case R.id.sendBtn:
-            openDevice();
-            int re = mUartctlManager.sendDataToDevice(getSendText());
-            Log.i(TAG, "send result:"+re);
+            //openDevice();
+		    mBuffer = new byte[1024];
+		    Arrays.fill(mBuffer, (byte) 0x55);
+			mSendingThread = new SendingThread();
+			mSendingThread.start();
+            //int re = mUartctlManager.sendDataToDevice(getSendText());
+            //Log.i(TAG, "send result:"+re);
             break;
         }
     }
+	
+    private class SendingThread extends Thread {
+		@Override
+		public void run() {
+			while (!isInterrupted()) {
+					//if (mOutputStream != null) {
+						//mOutputStream.write(mBuffer);
+                        int re = mUartctlManager.sendDataToDevice(mBuffer);
+			}
+		}
+	}
     
     /*
     * 打开驱动
@@ -128,7 +166,8 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
             }
         }
     }
-    
+   
+    /*
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(1,1,0,R.string.config);
@@ -144,7 +183,7 @@ public class UARTCTLActivity extends Activity implements View.OnClickListener
             startActivity(intent);
         }
         return true;
-    }
+    }*/
     
     @Override
     protected void onPause() {

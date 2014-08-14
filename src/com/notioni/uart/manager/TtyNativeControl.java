@@ -118,7 +118,7 @@ public class TtyNativeControl {
 
     private static void postEventFromNative(Object tty_ref, int what, int arg1, int arg2, Object obj) 
     {
-        Log.i(TAG, "[postEventFromNative] what:"+what);
+        //Log.i(TAG, "[postEventFromNative] what:"+what);
         TtyNativeControl t = (TtyNativeControl)((WeakReference)tty_ref).get();
         if(t == null)
             return;
