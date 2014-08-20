@@ -131,6 +131,8 @@ void JNIMyObserver::OnEvent(const char* buffer,int length,int what)
     if(isAttacked) {
         g_JavaVM->DetachCurrentThread();//分离线程
     }
+
+    return;
 }
 
 
@@ -206,7 +208,7 @@ static int JNICALL com_notioni_uart_manager_TtyNativeControl__sendMsgToTty(
     JNIEnv *env,jobject clazz,jbyteArray data) 
 { 
     //byte[]
-    LOGW("com_notioni_uart_manager_TtyNativeControl__sendMsgToTty");
+   // LOGW("com_notioni_uart_manager_TtyNativeControl__sendMsgToTty");
     //jbyte * arrayBody = env->GetByteArrayElements(data,0); jsize theArrayLengthJ = env->GetArrayLength(data); BYTE * starter = (BYTE *)arrayBody;
     if(mTtyfd < 0) {
         LOGE("mTtyfd open failure ,non't write");
@@ -216,11 +218,12 @@ static int JNICALL com_notioni_uart_manager_TtyNativeControl__sendMsgToTty(
     jsize arrayLength = env->GetArrayLength(data);
     char* byteData = (char*)arrayData;
     int len = (int)arrayLength;
-    LOGW("write data len:%d",len);
+    //LOGW("write data len:%d",len);
     int re = write(mTtyfd,byteData,len);
     if(re == -1) {
         LOGE("write device error");
     }
+    env->ReleaseByteArrayElements(data,arrayData,0);
     return re;
 }
 
@@ -228,7 +231,7 @@ static int JNICALL com_notioni_uart_manager_TtyNativeControl__sendMsgToTty(
 * 线程Run
 */
 void* threadreadTtyData(void* arg) {
-    LOGW("run read data");
+    //LOGW("run read data");
     if(!(arg)) {
         return NULL;
     }
@@ -257,8 +260,8 @@ void* threadreadTtyData(void* arg) {
         default:/* 说明等待时间还未到5秒加0毫秒，mTty的状态发生了变化 */
             if(FD_ISSET(mTtyfd,&readfd)) { /* 先判断一下mTty这外被监视的句柄是否真的变成可读的了 */
                 int len = read(mTtyfd,buf,sizeof(buf));
-                LOGE("#####################richard: read len: %d #####",len);
-                LOGE("#####################richard: read buf: %02x, #####",buf[0]);
+               // LOGE("#####################richard: read len: %d #####",len);
+               // LOGE("#####################richard: read buf: %02x, #####",buf[0]);
                 /**发送数据**/
                 if(!(arg))break;
                 JNIMyObserver *l = static_cast<JNIMyObserver *>(arg);
@@ -299,6 +302,7 @@ static void JNICALL com_notioni_uart_manager_TtyNativeControl__receiveMsgFromTty
     } else {
         LOGW("create read data thred success");
     }
+    return;
 }
 
 /**
